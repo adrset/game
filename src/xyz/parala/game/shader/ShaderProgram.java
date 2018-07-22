@@ -31,12 +31,11 @@ public abstract class ShaderProgram {
         programID = GL20.glCreateProgram();
         GL20.glAttachShader(programID, vertexShaderID);
         GL20.glAttachShader(programID, fragmentShaderID);
-        bindAttributes();
         GL20.glLinkProgram(programID);
         GL20.glValidateProgram(programID);
     }
           
-    private int getUniformLocation(String uniformName){
+    protected int getUniformLocation(String uniformName){
         return GL20.glGetUniformLocation(programID,uniformName);
     }
      
@@ -56,15 +55,10 @@ public abstract class ShaderProgram {
         GL20.glDeleteShader(fragmentShaderID);
         GL20.glDeleteProgram(programID);
     }
-     
-    protected abstract void bindAttributes();
-     
-    protected void bindAttribute(int attribute, String variableName){
-        GL20.glBindAttribLocation(programID, attribute, variableName);
-    }
-     
+ 
     protected void loadFloat(String name, float value){
         GL20.glUniform1f(getUniformLocation(name), value);
+        System.out.println(getUniformLocation(name));
     }
      
     protected void loadVector(String name, Vector3f vector){

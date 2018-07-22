@@ -14,9 +14,16 @@ public class Renderer {
 	}
 	
 	public void render(List<Renderable> toRender) {
+		
+		shader.start();
 		for(Renderable r : toRender) {
 			r.draw();
 		}
+		shader.stop();
+	}
+	
+	public WorldShader getShader() {
+		return shader;
 	}
 
 }

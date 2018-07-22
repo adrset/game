@@ -7,11 +7,4 @@ public class WorldShader extends ShaderProgram {
 
 	}
 
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");// bind variable from shader
-		super.bindAttribute(1, "texture_coord");
-		super.bindAttribute(2, "normal");
-	}
-
 }
