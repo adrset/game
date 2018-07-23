@@ -26,7 +26,7 @@ public class ShaderLoader {
     	System.out.println(file);
         StringBuilder shaderSource = new StringBuilder();
         try{
-        	InputStream in = Class.class.getResourceAsStream(file);
+        	InputStream in = ShaderLoader.class.getResourceAsStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;
             while((line = reader.readLine())!=null){

@@ -16,19 +16,21 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.nio.FloatBuffer;
 
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import xyz.parala.game.shader.ShaderProgram;
 
-public class Quad implements Renderable {
+public class Quad extends Entity {
 	int vaoID;
 	int vboID;
-	
+
 	public Quad(float[] vertices) {
+		super(null, new Vector3f(0.0f, 0.0f, -10.0f), new Vector3f());
 		vaoID = glGenVertexArrays();
 		glBindVertexArray(vaoID);
 		// Position VBO
-		
+
 		vboID = glGenBuffers();
 		FloatBuffer posBuffer = MemoryUtil.memAllocFloat(vertices.length);
 		posBuffer.put(vertices).flip();
@@ -39,12 +41,20 @@ public class Quad implements Renderable {
 		glBindVertexArray(0);
 	}
 
+	// Overriding because Entity class uses Meshes
 	@Override
 	public void draw(ShaderProgram shader) {
+		setModelUniform(shader);
 		glBindVertexArray(vaoID);
 		glEnableVertexAttribArray(0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
 
 	}
 

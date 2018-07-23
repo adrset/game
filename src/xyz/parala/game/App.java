@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import xyz.parala.game.camera.Camera;
+import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.Quad;
 import xyz.parala.game.model.Renderable;
 import xyz.parala.game.renderer.Renderer;
@@ -20,7 +21,7 @@ public class App implements Runnable {
 	private Camera camera;
 	private int height, width;
 	String title;
-	private List<Renderable> renderables;
+	private List<Entity> renderables;
 
 	public App(String title, int width, int height) {
 		this.title = title;
@@ -39,7 +40,7 @@ public class App implements Runnable {
 		camera = new Camera();
 		window = new Window(title, width, height);
 		renderer = new Renderer("/xyz/parala/game/shader/basic", width, height);
-		renderables = new ArrayList<Renderable>();
+		renderables = new ArrayList<Entity>();
 		loop();
 	}
 

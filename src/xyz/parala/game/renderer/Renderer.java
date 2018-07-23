@@ -5,9 +5,9 @@ import java.util.List;
 import org.joml.Matrix4f;
 
 import xyz.parala.game.camera.Camera;
+import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.Renderable;
 import xyz.parala.game.shader.ShaderProgram;
-import xyz.parala.game.shader.WorldShader;
 
 public class Renderer {
 
@@ -22,17 +22,18 @@ public class Renderer {
 	
 	public void setProjection(int width, int height) {
 		projection = new Matrix4f();
-		//projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 100.0f, false);
+		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 100.0f, false);
 	}
 	
-	public void render(List<Renderable> toRender, Camera camera) {
+	public void render(List<Entity> toRender, Camera camera) {
 		
 		shader.start();
 		shader.setUniform("projection", projection);
 		shader.setUniform("view", camera.getView());
-		for(Renderable r : toRender) {
+		for(Entity e : toRender) {
+
 			// Let each renderable access to setting shader values
-			r.draw(shader);
+			e.draw(shader);
 		}
 		shader.stop();
 	}
