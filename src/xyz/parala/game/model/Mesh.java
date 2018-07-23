@@ -31,6 +31,8 @@ import java.util.List;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
+import xyz.parala.game.shader.ShaderProgram;
+
 public class Mesh implements Renderable {
 
 	public static final int MAX_WEIGHTS = 4;
@@ -247,7 +249,7 @@ public class Mesh implements Renderable {
 	}
 
 	@Override
-	public void draw() {
+	public void draw(ShaderProgram shader) {
 
 		Texture texture = material != null ? material.getTexture() : null;
 		if (texture != null) {

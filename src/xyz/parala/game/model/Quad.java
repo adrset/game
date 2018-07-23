@@ -18,6 +18,8 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.system.MemoryUtil;
 
+import xyz.parala.game.shader.ShaderProgram;
+
 public class Quad implements Renderable {
 	int vaoID;
 	int vboID;
@@ -38,7 +40,7 @@ public class Quad implements Renderable {
 	}
 
 	@Override
-	public void draw() {
+	public void draw(ShaderProgram shader) {
 		glBindVertexArray(vaoID);
 		glEnableVertexAttribArray(0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
