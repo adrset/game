@@ -15,8 +15,8 @@ public class Renderer {
 	
 	Matrix4f projection;
 
-	public Renderer(String shaderName, int width, int height) {
-		shader = new ShaderProgram(shaderName + ".vs", shaderName + ".fs");
+	public Renderer(ShaderProgram shader, int width, int height) {
+		this.shader = shader;
 		setProjection(width, height);
 	}
 	

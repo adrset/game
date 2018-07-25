@@ -41,16 +41,23 @@ public class Window {
 	boolean mode;
 	int width;
 	int height;
+	boolean forceClose;
+	
 
 	public Window(String name, int desiredWidth, int desiredHeight) {
 		this.title = name;
 		this.width = desiredWidth;
 		this.height = desiredHeight;
+		forceClose = false;
 		init();
 	}
 	
 	public long getID() {
 		return windowID;
+	}
+	
+	public void requestClose() {
+		forceClose = true;
 	}
 	
 	public void init() {
@@ -91,8 +98,6 @@ public class Window {
 		glfwSetCursorPosCallback(windowID, Mouse.mouseCursor);
 		glfwSetScrollCallback(windowID, Mouse.mouseScroll);
 		glfwSetMouseButtonCallback(windowID, Mouse.mouseButtons);
-		
-
 	}
 	
 	public void clear() {
@@ -100,7 +105,7 @@ public class Window {
 	}
 	
 	public boolean shouldClose() {
-		return glfwWindowShouldClose(windowID);
+		return (glfwWindowShouldClose(windowID) || forceClose);
 	}
 	
 	public void swapBuffers() {

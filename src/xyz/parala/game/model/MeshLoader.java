@@ -39,13 +39,12 @@ public class MeshLoader {
 	}
 
 	public static Mesh[] load(String resourcePath, int flags) throws Exception {
-		String fileName = Thread.currentThread().getContextClassLoader()
-				.getResource("/xyz/parala/game/model/" + resourcePath + ".obj").getFile();
+		String fileName = resourcePath + ".obj";
 		File file = new File(fileName);
 		
 		// Assimp will be able to find the corresponding mtl file if we call
 		// aiImportFile this way.
-		AIScene aiScene = aiImportFile(file.getAbsolutePath(), aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
+		AIScene aiScene = aiImportFile(fileName, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
 		if (aiScene == null) {
 			throw new IllegalStateException(aiGetErrorString());
 		}

@@ -25,7 +25,7 @@ public class Utils {
 					;
 			}
 		} else {
-			try (InputStream source = Utils.class.getResourceAsStream(resource);
+			try (InputStream source = Class.class.getResourceAsStream(resource);
 					ReadableByteChannel rbc = Channels.newChannel(source)) {
 				buffer = createByteBuffer(bufferSize);
 
