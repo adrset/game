@@ -5,18 +5,20 @@ import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_SPECULAR;
 import static org.lwjgl.assimp.Assimp.aiGetErrorString;
 import static org.lwjgl.assimp.Assimp.aiGetMaterialColor;
-import static org.lwjgl.assimp.Assimp.aiImportFile;
+import static org.lwjgl.assimp.Assimp.aiImportFileFromMemory;
 import static org.lwjgl.assimp.Assimp.aiProcess_FixInfacingNormals;
 import static org.lwjgl.assimp.Assimp.aiProcess_JoinIdenticalVertices;
 import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 import static org.lwjgl.assimp.Assimp.aiTextureType_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.aiTextureType_NONE;
 
-import java.io.File;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
@@ -28,6 +30,7 @@ import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.AIString;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.assimp.Assimp;
+import org.lwjgl.system.MemoryUtil;
 
 import xyz.parala.game.util.Lists;
 
@@ -39,12 +42,20 @@ public class MeshLoader {
 	}
 
 	public static Mesh[] load(String resourcePath, int flags) throws Exception {
-		String fileName = resourcePath + ".obj";
-		File file = new File(fileName);
-		
-		// Assimp will be able to find the corresponding mtl file if we call
-		// aiImportFile this way.
-		AIScene aiScene = aiImportFile(fileName, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate);
+		String fileName = "/xyz/parala/game/model/" + resourcePath;
+		if (resourcePath.contains(".obj")) {
+			throw new Exception("OBJ files unsupported!!! Prefered extension is .dae");
+		}
+
+		InputStream in = Class.class.getResourceAsStream(fileName);
+	
+		byte[] _data = IOUtils.toByteArray(in);
+		ByteBuffer data = MemoryUtil.memCalloc(_data.length);
+		data.put(_data);
+		data.flip();
+		AIScene aiScene = aiImportFileFromMemory(data, flags, "");
+		MemoryUtil.memFree(data);
+
 		if (aiScene == null) {
 			throw new IllegalStateException(aiGetErrorString());
 		}
@@ -80,7 +91,7 @@ public class MeshLoader {
 		if (textPath != null && textPath.length() > 0) {
 			TextureCache textCache = TextureCache.getInstance();
 			texture = textCache.getTexture(texturesDir + "/" + textPath);
-		
+
 		}
 
 		Vector4f ambient = Material.DEFAULT_COLOUR;
@@ -111,34 +122,31 @@ public class MeshLoader {
 		List<Float> textures = new ArrayList<>();
 		List<Float> normals = new ArrayList<>();
 		List<Integer> indices = new ArrayList<>();
-		
-		
 
 		processVertices(aiMesh, vertices);
-		
+
 		Vector3f min = new Vector3f();
 		Vector3f max = new Vector3f();
-		
+
 		min.x = vertices.get(0);
 		max.x = vertices.get(0);
-		
+
 		min.y = vertices.get(1);
 		max.y = vertices.get(1);
-		
+
 		min.z = vertices.get(2);
 		max.z = vertices.get(2);
-		
-		for(int i=3;i<vertices.size();i+=3) {
+
+		for (int i = 3; i < vertices.size(); i += 3) {
 			min.x = Math.min(min.x, vertices.get(i));
-			min.y = Math.min(min.y, vertices.get(i+1));
-			min.z = Math.min(min.z, vertices.get(i+2));
-			
+			min.y = Math.min(min.y, vertices.get(i + 1));
+			min.z = Math.min(min.z, vertices.get(i + 2));
+
 			max.x = Math.max(max.x, vertices.get(i));
-			max.y = Math.max(max.y, vertices.get(i+1));
-			max.z = Math.max(max.z, vertices.get(i+2));
+			max.y = Math.max(max.y, vertices.get(i + 1));
+			max.z = Math.max(max.z, vertices.get(i + 2));
 		}
-		
-		
+
 		processNormals(aiMesh, normals);
 		processTextCoords(aiMesh, textures);
 		processIndices(aiMesh, indices);

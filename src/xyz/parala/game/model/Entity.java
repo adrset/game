@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 import xyz.parala.game.shader.ShaderProgram;
 
-public class Entity implements Renderable, Updatable {
+public class Entity implements Renderable {
 	Mesh[] meshes;
 	Vector3f position; // common for all meshes
 	Vector3f rotation; // common for all meshes
@@ -60,7 +60,7 @@ public class Entity implements Renderable, Updatable {
 	}
 
 	@Override
-	public void update() {
+	public void update(ShaderProgram shader) {
 		// TODO Auto-generated method stub
 		
 	}

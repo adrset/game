@@ -47,13 +47,13 @@ public class Quad extends Entity {
 		setModelUniform(shader);
 		glBindVertexArray(vaoID);
 		glEnableVertexAttribArray(0);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glDisableVertexAttribArray(0);
 		glBindVertexArray(0);
 	}
 
 	@Override
-	public void update() {
+	public void update(ShaderProgram shader) {
 		// TODO Auto-generated method stub
 
 	}

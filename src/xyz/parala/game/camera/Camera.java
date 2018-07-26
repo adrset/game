@@ -5,16 +5,24 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import xyz.parala.game.input.Keyboard;
-import xyz.parala.game.model.Updatable;
+import xyz.parala.game.input.Mouse;
+import xyz.parala.game.model.Renderable;
+import xyz.parala.game.shader.ShaderProgram;
 
-public class Camera implements Updatable {
+public class Camera implements Renderable {
 	Vector3f position;
 	Matrix4f view;
 	Vector3f target; // just a temporary variable
 	Vector3f up;
 	Vector3f front;
+	float pitch = 0;
+	float yaw = -90;
 	boolean needsUpdate = true;
 	float cameraSpeed;
+	
+	public Vector3f getPosition() {
+		return position;
+	}
 
 	public Camera() {
 		view = new Matrix4f();
@@ -29,28 +37,54 @@ public class Camera implements Updatable {
 		return view;
 	}
 
-	public void update() {
+
+	@Override
+	public void draw(ShaderProgram shader) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(ShaderProgram shader) {
+		
+		shader.setUniform("viewPos", position);
+		yaw   += Mouse.mouseCursor.getDX() * 0.4;
+		pitch +=  Mouse.mouseCursor.getDY() * 0.4;  
+		
+		if(pitch < -89.0f) {
+			pitch = -89.0f;
+		}else if(pitch > 89.0f) {
+			pitch = 89.0f;
+		}
+		
+		target.zero();
+		target.x = (float) (Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw)));
+		target.y = (float) Math.sin(Math.toRadians(pitch));
+		target.z = (float) (Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw)));
+		target.normalize();
+		
+		front.set(target);
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_W)) {
 			target = target.set(front).mul(cameraSpeed);
 			position = position.add(target);
 			needsUpdate = true;
 		}
+		
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
 			target = target.set(front).mul(cameraSpeed);
 			position = position.sub(target);
 			needsUpdate = true;
 		}
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_A)) {
-			position.x -= 0.1f;
+			//position.x -= 0.1f;
 			target = target.set(front);
 			target = target.cross(up);
 			target = target.normalize().mul(cameraSpeed);
 			position = position.sub(target);
-			System.out.println(target);
 			needsUpdate = true;
 		}
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_D)) {
-			position.x += 0.1f;
+			//position.x += 0.1f;
 			target = target.set(front);
 			target = target.cross(up);
 			target = target.normalize().mul(cameraSpeed);
@@ -58,12 +92,13 @@ public class Camera implements Updatable {
 			needsUpdate = true;
 		}
 
-		if (needsUpdate) {
+		if (true) {
 			view.identity();
 			target.set(position).add(front);
 			view.lookAt(position, target, up);
 		}
 		needsUpdate = false;
+		
 	}
 
 }

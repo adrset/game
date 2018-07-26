@@ -257,7 +257,17 @@ public class Mesh implements Renderable {
 			glActiveTexture(GL_TEXTURE0);
 			// Bind the texture
 			glBindTexture(GL_TEXTURE_2D, texture.getId());
+			shader.setUniform("material.diffuse", 0);
 		}
+		texture = material != null ? material.getNormalMap() : null;
+		if (texture != null) {
+			// Activate first texture bank
+			glActiveTexture(GL_TEXTURE0 + 1);
+			// Bind the texture
+			glBindTexture(GL_TEXTURE_2D, texture.getId());
+			shader.setUniform("material.specular", 1);
+		}
+		shader.setUniform("material.shininess", 0.1f);
 
 		// Draw the mesh
 		glBindVertexArray(getVaoId());
@@ -274,5 +284,11 @@ public class Mesh implements Renderable {
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+	}
+
+	@Override
+	public void update(ShaderProgram shader) {
+		// TODO Auto-generated method stub
+		
 	}
 }

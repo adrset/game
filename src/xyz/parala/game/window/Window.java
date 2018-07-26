@@ -2,9 +2,10 @@ package xyz.parala.game.window;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -60,6 +61,10 @@ public class Window {
 		forceClose = true;
 	}
 	
+	public void centerCursor() {
+		glfwSetCursorPos(windowID, width / 2, height / 2);
+	}
+	
 	public void init() {
 
 		if (!glfwInit()) {
@@ -93,7 +98,7 @@ public class Window {
 		GL.createCapabilities();
 
 		// Set input callbacks
-		glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		glfwSetKeyCallback(windowID, new Keyboard());
 		glfwSetCursorPosCallback(windowID, Mouse.mouseCursor);
 		glfwSetScrollCallback(windowID, Mouse.mouseScroll);

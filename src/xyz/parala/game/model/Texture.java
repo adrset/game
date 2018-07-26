@@ -52,7 +52,7 @@ public class Texture {
 
     public Texture(String fileName) throws Exception {
     	
-        this(Utils.ioResourceToByteBuffer( fileName, 1024));
+        this(Utils.ioResourceToByteBuffer( fileName));
       
     }
 

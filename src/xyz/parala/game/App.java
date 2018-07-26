@@ -9,10 +9,11 @@ import org.lwjgl.opengl.GL11;
 
 import xyz.parala.game.camera.Camera;
 import xyz.parala.game.input.Keyboard;
+import xyz.parala.game.light.Light;
 import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.MeshLoader;
 import xyz.parala.game.model.Quad;
-import xyz.parala.game.model.Updatable;
+import xyz.parala.game.model.Renderable;
 import xyz.parala.game.renderer.Renderer;
 import xyz.parala.game.shader.ShaderProgram;
 import xyz.parala.game.window.Window;
@@ -24,6 +25,7 @@ public class App implements Runnable {
 	private Renderer renderer;
 	private Camera camera;
 	private int height, width;
+	private Light light;
 	String title;
 	private List<Entity> entites;
 
@@ -46,6 +48,8 @@ public class App implements Runnable {
 		String path = "/xyz/parala/game/shader/basic";
 		renderer = new Renderer( new ShaderProgram(path + ".vs", path + ".fs"), width, height);
 		entites = new ArrayList<Entity>();
+		//glm::vec3(0.05f, 0.03f,0.02f), glm::vec3(1.0f),glm::vec3(0.8f),glm::vec3(1.0f, 0.0f, 0.0f)
+		light = new Light(new Vector3f(10, 200, 10), new Vector3f(0.05f, 0.03f,0.02f), new Vector3f(1.0f), new Vector3f(0.8f), 1.0f, 0, 0);
 		loop();
 	}
 
@@ -54,7 +58,8 @@ public class App implements Runnable {
 		float vertices[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f };
 		entites.add(new Quad(vertices));
 		try {
-			entites.add(new Entity(MeshLoader.load("nanosuit"), new Vector3f(0,-10,-10), new Vector3f()));
+			entites.add(new Entity(MeshLoader.load("eyeball.dae"), new Vector3f(0,0,-10), new Vector3f()));
+			entites.add(new Entity(MeshLoader.load("nanosuit.dae"), new Vector3f(0,-10,-10), new Vector3f()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -65,8 +70,8 @@ public class App implements Runnable {
 			window.clear();
 			
 			doLogic();
-
-			renderer.render(entites, camera);
+			light.setPosition(camera.getPosition());
+			renderer.render(entites, camera, light);
 			
 
 			window.swapBuffers();
@@ -77,10 +82,10 @@ public class App implements Runnable {
 	}
 	
 	private void doLogic() {
-		for(Updatable e: entites) {
-			e.update();
+		for(Renderable e: entites) {
+			e.update(renderer.getShader());
 		}
-		camera.update();
+		camera.update(renderer.getShader());
 		
 		if(Keyboard.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
 			window.requestClose();

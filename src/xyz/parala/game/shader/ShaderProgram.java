@@ -62,6 +62,10 @@ public class ShaderProgram {
 	public void setUniform(String name, Vector3f vector) {
 		GL20.glUniform3f(getUniformLocation(name), vector.x, vector.y, vector.z);
 	}
+	
+	public void setUniform(String name, int i) {
+		GL20.glUniform1i(getUniformLocation(name), i);
+	}
 
 	public void setUniform(String name, Vector2f vector) {
 		GL20.glUniform2f(getUniformLocation(name), vector.x, vector.y);

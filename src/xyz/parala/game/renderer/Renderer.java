@@ -5,6 +5,7 @@ import java.util.List;
 import org.joml.Matrix4f;
 
 import xyz.parala.game.camera.Camera;
+import xyz.parala.game.light.Light;
 import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.Renderable;
 import xyz.parala.game.shader.ShaderProgram;
@@ -25,11 +26,13 @@ public class Renderer {
 		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 100.0f, false);
 	}
 	
-	public void render(List<Entity> toRender, Camera camera) {
+	public void render(List<Entity> toRender, Camera camera, Light light) {
 		
 		shader.start();
+		
 		shader.setUniform("projection", projection);
 		shader.setUniform("view", camera.getView());
+		light.update(shader);
 		for(Entity e : toRender) {
 
 			// Let each renderable access to setting shader values
