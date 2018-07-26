@@ -7,7 +7,7 @@ import xyz.parala.game.shader.ShaderProgram;
 
 public class Entity implements Renderable {
 	Mesh[] meshes;
-	Vector3f position; // common for all meshes
+	protected Vector3f position; // common for all meshes
 	Vector3f rotation; // common for all meshes
 	Matrix4f model;
 	Vector3f up;

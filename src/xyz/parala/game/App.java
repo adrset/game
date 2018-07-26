@@ -27,6 +27,7 @@ public class App implements Runnable {
 	private int height, width;
 	private Light light;
 	String title;
+	float time = 0.0f;
 	private List<Entity> entites;
 
 	public App(String title, int width, int height) {
@@ -49,7 +50,12 @@ public class App implements Runnable {
 		renderer = new Renderer( new ShaderProgram(path + ".vs", path + ".fs"), width, height);
 		entites = new ArrayList<Entity>();
 		//glm::vec3(0.05f, 0.03f,0.02f), glm::vec3(1.0f),glm::vec3(0.8f),glm::vec3(1.0f, 0.0f, 0.0f)
-		light = new Light(new Vector3f(10, 200, 10), new Vector3f(0.05f, 0.03f,0.02f), new Vector3f(1.0f), new Vector3f(0.8f), 1.0f, 0, 0);
+		try {
+			light = new Light(MeshLoader.load("nanosuit.dae"), new Vector3f(10, 200, 10), new Vector3f(0.05f, 0.03f,0.02f), new Vector3f(1.0f), new Vector3f(0.8f), 1.0f, 0, 0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		loop();
 	}
 
@@ -58,7 +64,6 @@ public class App implements Runnable {
 		float vertices[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f };
 		entites.add(new Quad(vertices));
 		try {
-			entites.add(new Entity(MeshLoader.load("eyeball.dae"), new Vector3f(0,0,-10), new Vector3f()));
 			entites.add(new Entity(MeshLoader.load("nanosuit.dae"), new Vector3f(0,-10,-10), new Vector3f()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,13 +71,12 @@ public class App implements Runnable {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		while (!window.shouldClose()) {
-			GL11.glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			window.clear();
 			
 			doLogic();
-			light.setPosition(camera.getPosition());
+			light.setPosition(new Vector3f((float) (100.0f * Math.cos(time)), 10.0f, (float) (100.0f * Math.sin(time += 0.03))));
 			renderer.render(entites, camera, light);
-			
 
 			window.swapBuffers();
 			GLFW.glfwPollEvents();
@@ -82,6 +86,7 @@ public class App implements Runnable {
 	}
 	
 	private void doLogic() {
+		
 		for(Renderable e: entites) {
 			e.update(renderer.getShader());
 		}

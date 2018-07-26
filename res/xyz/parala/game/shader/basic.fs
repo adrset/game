@@ -25,6 +25,7 @@ in vec3 frag_pos;
 out vec4 out_Color;
 
 uniform vec3 viewPos;
+uniform float blinn;
 uniform Material material;
 uniform PointLight pointLight;
 
@@ -34,8 +35,15 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    
+    float spec = 0.0f;
+    if(blinn > 1.0f){
+		vec3 halfwayDir = normalize(lightDir + viewDir);  
+		spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+    }else{
+   		vec3 reflectDir = reflect(-lightDir, normal);
+		spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);	
+	}
     // attenuation
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    

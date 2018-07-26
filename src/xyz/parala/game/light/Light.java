@@ -2,10 +2,11 @@ package xyz.parala.game.light;
 
 import org.joml.Vector3f;
 
-import xyz.parala.game.model.Renderable;
+import xyz.parala.game.model.Entity;
+import xyz.parala.game.model.Mesh;
 import xyz.parala.game.shader.ShaderProgram;
 
-public class Light implements Renderable {
+public class Light extends Entity {
 	
 	Vector3f ambient;
 	Vector3f specular;
@@ -13,10 +14,19 @@ public class Light implements Renderable {
 	float constant;
 	float linear;
 	float quadratic;
-	Vector3f position;
 	
 	public Light(Vector3f position, Vector3f ambient, Vector3f specular, Vector3f diffuse, float constant, float linear, float quadratic) {
-		this.position = position;
+		super(null, position, new Vector3f());
+		this.diffuse = diffuse;
+		this.ambient = ambient;
+		this.specular = specular;
+		this.linear = linear;
+		this.quadratic = quadratic;
+		this.constant = constant;
+	}
+	
+	public Light(Mesh[] meshes, Vector3f position, Vector3f ambient, Vector3f specular, Vector3f diffuse, float constant, float linear, float quadratic) {
+		super(meshes, position, new Vector3f());
 		this.diffuse = diffuse;
 		this.ambient = ambient;
 		this.specular = specular;
@@ -25,11 +35,7 @@ public class Light implements Renderable {
 		this.constant = constant;
 	}
 
-	@Override
-	public void draw(ShaderProgram shader) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
 	public void update(ShaderProgram shader) {
@@ -40,14 +46,6 @@ public class Light implements Renderable {
 		shader.setUniform("pointLight.constant", constant);
 		shader.setUniform("pointLight.linear", linear);
 		shader.setUniform("pointLight.quadratic", quadratic);
-	}
-
-	public Vector3f getPosition() {
-		return position;
-	}
-
-	public void setPosition(Vector3f position) {
-		this.position = position;
 	}
 	
 	
