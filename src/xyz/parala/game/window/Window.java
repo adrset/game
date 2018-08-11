@@ -2,7 +2,7 @@ package xyz.parala.game.window;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -29,6 +29,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -44,9 +45,11 @@ public class Window {
 	int width;
 	int height;
 	boolean forceClose;
+	boolean fullScreen;
 	
 
-	public Window(String name, int desiredWidth, int desiredHeight) {
+	public Window(String name, int desiredWidth, int desiredHeight, boolean fullScreen) {
+		this.fullScreen = fullScreen;
 		this.title = name;
 		this.width = desiredWidth;
 		this.height = desiredHeight;
@@ -83,7 +86,7 @@ public class Window {
 
 		// Create window
 		
-		windowID = glfwCreateWindow(width, height, title, NULL, NULL);
+		windowID = glfwCreateWindow(width, height, title, fullScreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 		
 
 		glfwShowWindow(windowID);
@@ -99,7 +102,7 @@ public class Window {
 		GL.createCapabilities();
 
 		// Set input callbacks
-		glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(windowID, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetKeyCallback(windowID, new Keyboard());
 		glfwSetCursorPosCallback(windowID, Mouse.mouseCursor);
 		glfwSetScrollCallback(windowID, Mouse.mouseScroll);
@@ -108,6 +111,7 @@ public class Window {
 	
 	public void clear() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
 	}
 	
 	public boolean shouldClose() {
@@ -116,6 +120,7 @@ public class Window {
 	
 	public void swapBuffers() {
 		glfwSwapBuffers(windowID);
+
 	}
 	
 	public void close() {

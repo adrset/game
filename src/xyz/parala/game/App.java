@@ -28,9 +28,11 @@ public class App implements Runnable {
 	private Light light;
 	String title;
 	float time = 0.0f;
+	boolean fullScreen = false;
 	private List<Entity> entites;
 
-	public App(String title, int width, int height) {
+	public App(String title, int width, int height, boolean fullScreen) {
+		this.fullScreen = fullScreen;
 		this.title = title;
 		this.height = height;
 		this.width = width;
@@ -39,13 +41,13 @@ public class App implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new App("MyGame", 800, 600);
+		new App("MyGame", 1920, 1080, true);
 	}
 
 	@Override
 	public void run() {
 		camera = new Camera();
-		window = new Window(title, width, height);
+		window = new Window(title, width, height, fullScreen);
 		String path = "/xyz/parala/game/shader/basic";
 		renderer = new Renderer( new ShaderProgram(path + ".vs", path + ".fs"), width, height);
 		entites = new ArrayList<Entity>();
@@ -73,7 +75,8 @@ public class App implements Runnable {
 		while (!window.shouldClose()) {
 			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			window.clear();
-			
+			//GLFW.glfwSetCursorPos(window.getID(), width / 2, height / 2);
+			//GLFW.glfwd
 			doLogic();
 			light.setPosition(new Vector3f((float) (100.0f * Math.cos(time)), 10.0f, (float) (100.0f * Math.sin(time += 0.03))));
 			renderer.render(entites, camera, light);

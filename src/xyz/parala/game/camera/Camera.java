@@ -48,8 +48,8 @@ public class Camera implements Renderable {
 	public void update(ShaderProgram shader) {
 		
 		shader.setUniform("viewPos", position);
-		yaw   += Mouse.mouseCursor.getDX() * 0.4;
-		pitch +=  Mouse.mouseCursor.getDY() * 0.4;  
+		yaw   += (float) (Mouse.mouseCursor.getDX() * 0.4);
+		pitch +=  (float) (Mouse.mouseCursor.getDY() * 0.4);  
 		
 		if(pitch < -89.0f) {
 			pitch = -89.0f;
