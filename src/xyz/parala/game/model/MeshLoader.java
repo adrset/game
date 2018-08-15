@@ -125,34 +125,12 @@ public class MeshLoader {
 
 		processVertices(aiMesh, vertices);
 
-		Vector3f min = new Vector3f();
-		Vector3f max = new Vector3f();
-
-		min.x = vertices.get(0);
-		max.x = vertices.get(0);
-
-		min.y = vertices.get(1);
-		max.y = vertices.get(1);
-
-		min.z = vertices.get(2);
-		max.z = vertices.get(2);
-
-		for (int i = 3; i < vertices.size(); i += 3) {
-			min.x = Math.min(min.x, vertices.get(i));
-			min.y = Math.min(min.y, vertices.get(i + 1));
-			min.z = Math.min(min.z, vertices.get(i + 2));
-
-			max.x = Math.max(max.x, vertices.get(i));
-			max.y = Math.max(max.y, vertices.get(i + 1));
-			max.z = Math.max(max.z, vertices.get(i + 2));
-		}
-
 		processNormals(aiMesh, normals);
 		processTextCoords(aiMesh, textures);
 		processIndices(aiMesh, indices);
 
 		Mesh mesh = new Mesh(Lists.listToArray(vertices), Lists.listToArray(textures), Lists.listToArray(normals),
-				Lists.listIntToArray(indices), min, max);
+				Lists.listIntToArray(indices));
 		Material material;
 		int materialIdx = aiMesh.mMaterialIndex();
 		if (materialIdx >= 0 && materialIdx < materials.size()) {

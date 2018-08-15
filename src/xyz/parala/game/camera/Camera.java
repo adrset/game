@@ -64,14 +64,20 @@ public class Camera implements Renderable {
 		target.normalize();
 		
 		front.set(target);
+		float speedUp;
+		if(Keyboard.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+			speedUp = 10;
+		}else {
+			speedUp = 1;
+		}
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_W)) {
-			target = target.set(front).mul(cameraSpeed);
+			target = target.set(front).mul(cameraSpeed*speedUp);
 			position = position.add(target);
 			needsUpdate = true;
 		}
 		
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
-			target = target.set(front).mul(cameraSpeed);
+			target = target.set(front).mul(cameraSpeed*speedUp);
 			position = position.sub(target);
 			needsUpdate = true;
 		}
@@ -79,7 +85,7 @@ public class Camera implements Renderable {
 			//position.x -= 0.1f;
 			target = target.set(front);
 			target = target.cross(up);
-			target = target.normalize().mul(cameraSpeed);
+			target = target.normalize().mul(cameraSpeed*speedUp);
 			position = position.sub(target);
 			needsUpdate = true;
 		}
@@ -87,7 +93,7 @@ public class Camera implements Renderable {
 			//position.x += 0.1f;
 			target = target.set(front);
 			target = target.cross(up);
-			target = target.normalize().mul(cameraSpeed);
+			target = target.normalize().mul(cameraSpeed*speedUp);
 			position = position.add(target);
 			needsUpdate = true;
 		}

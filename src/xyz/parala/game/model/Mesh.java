@@ -51,16 +51,14 @@ public class Mesh implements Renderable {
 
 	private float boundingRadius;
 
-	public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, Vector3f min, Vector3f max) {
+	public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
 		this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0),
-				createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0), min, max);
+				createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
 	}
 
 	public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, int[] jointIndices,
-			float[] weights, Vector3f min, Vector3f max) {
+			float[] weights) {
 
-		this.min = min;
-		this.max = max;
 		FloatBuffer posBuffer = null;
 		FloatBuffer textCoordsBuffer = null;
 		FloatBuffer vecNormalsBuffer = null;

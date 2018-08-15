@@ -19,4 +19,9 @@ public class Utils {
 		return data;
 	}
 
+	
+	public static ByteBuffer decodeImage(ByteBuffer rawImage) {
+		return null;
+		
+	}
 }

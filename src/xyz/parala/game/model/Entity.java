@@ -13,6 +13,10 @@ public class Entity implements Renderable {
 	Vector3f up;
 	Vector3f right;
 	Vector3f forward;
+	
+	protected void setMeshes(Mesh[] m) {
+		this.meshes = m;
+	}
 
 	public Entity(Mesh[] meshes, Vector3f position, Vector3f rotation) {
 		this.meshes = meshes;

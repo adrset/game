@@ -14,6 +14,7 @@ import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.MeshLoader;
 import xyz.parala.game.model.Quad;
 import xyz.parala.game.model.Renderable;
+import xyz.parala.game.model.Terrain;
 import xyz.parala.game.renderer.Renderer;
 import xyz.parala.game.shader.ShaderProgram;
 import xyz.parala.game.window.Window;
@@ -41,7 +42,7 @@ public class App implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new App("MyGame", 1920, 1080, true);
+		new App("MyGame", 800, 600, false);
 	}
 
 	@Override
@@ -62,6 +63,12 @@ public class App implements Runnable {
 	}
 
 	private void loop() {
+		try {
+			entites.add(new Terrain("/xyz/parala/game/texture/bab.jpg"));
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		float vertices[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f };
 		entites.add(new Quad(vertices));
@@ -73,7 +80,7 @@ public class App implements Runnable {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		while (!window.shouldClose()) {
-			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			GL11.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
 			window.clear();
 			//GLFW.glfwSetCursorPos(window.getID(), width / 2, height / 2);
 			//GLFW.glfwd
