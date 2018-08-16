@@ -23,6 +23,10 @@ public class Camera implements Renderable {
 	public Vector3f getPosition() {
 		return position;
 	}
+	
+	public void setPosition(Vector3f pos) {
+		this.position = pos;
+	}
 
 	public Camera() {
 		view = new Matrix4f();
@@ -66,7 +70,7 @@ public class Camera implements Renderable {
 		front.set(target);
 		float speedUp;
 		if(Keyboard.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-			speedUp = 10;
+			speedUp = 100;
 		}else {
 			speedUp = 1;
 		}
