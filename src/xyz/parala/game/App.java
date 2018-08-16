@@ -15,6 +15,7 @@ import xyz.parala.game.model.MeshLoader;
 import xyz.parala.game.model.Quad;
 import xyz.parala.game.model.Renderable;
 import xyz.parala.game.model.Terrain;
+import xyz.parala.game.model.TerrainManager;
 import xyz.parala.game.renderer.Renderer;
 import xyz.parala.game.shader.ShaderProgram;
 import xyz.parala.game.window.Window;
@@ -31,6 +32,7 @@ public class App implements Runnable {
 	float time = 0.0f;
 	boolean fullScreen = false;
 	private List<Entity> entites;
+	List<Terrain> terrains;
 
 	public App(String title, int width, int height, boolean fullScreen) {
 		this.fullScreen = fullScreen;
@@ -42,12 +44,13 @@ public class App implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new App("MyGame", 800, 600, false);
+		new App("MyGame", 80, 60, false);
 	}
 
 	@Override
 	public void run() {
 		camera = new Camera();
+		camera.setPosition(new Vector3f(0, 20, 0));
 		window = new Window(title, width, height, fullScreen);
 		String path = "/xyz/parala/game/shader/basic";
 		renderer = new Renderer( new ShaderProgram(path + ".vs", path + ".fs"), width, height);
@@ -63,16 +66,14 @@ public class App implements Runnable {
 	}
 
 	private void loop() {
+		TerrainManager t = null;
 		try {
-			entites.add(new Terrain("/xyz/parala/game/texture/bab.jpg"));
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+			t = new TerrainManager();
+		 
 
 		float vertices[] = { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f };
 		entites.add(new Quad(vertices));
-		try {
+		
 			entites.add(new Entity(MeshLoader.load("nanosuit.dae"), new Vector3f(0,-10,-10), new Vector3f()));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,13 +81,21 @@ public class App implements Runnable {
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		while (!window.shouldClose()) {
-			GL11.glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+			try {
+				terrains = t.getTerrains(camera.getPosition(), 3);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			window.clear();
 			//GLFW.glfwSetCursorPos(window.getID(), width / 2, height / 2);
 			//GLFW.glfwd
 			doLogic();
 			light.setPosition(new Vector3f((float) (100.0f * Math.cos(time)), 10.0f, (float) (100.0f * Math.sin(time += 0.03))));
-			renderer.render(entites, camera, light);
+			List<Entity> ents = new ArrayList<Entity>(entites);
+			ents.addAll(terrains);
+			renderer.render(ents, camera, light);
 
 			window.swapBuffers();
 			GLFW.glfwPollEvents();
