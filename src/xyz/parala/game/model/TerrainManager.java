@@ -145,7 +145,7 @@ public class TerrainManager {
 		terrainsToReturn.clear();
 		
 		for(int ii = k; ii< k + 2* radius; ii++) {
-			for(int jj = l; jj< k + 2* radius; jj++) {
+			for(int jj = l; jj< l + 2* radius; jj++) {
 				
 				//System.out.println(ii + "," + jj);
 				terrainsToReturn.add(getTerrainFromMap(ii, jj));

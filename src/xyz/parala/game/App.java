@@ -44,7 +44,7 @@ public class App implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		new App("MyGame", 80, 60, false);
+		new App("MyGame", 200, 120, false);
 	}
 
 	@Override
@@ -78,9 +78,10 @@ public class App implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		while (!window.shouldClose()) {
+			double time = System.nanoTime();
 			try {
 				terrains = t.getTerrains(camera.getPosition(), 3);
 			} catch (Exception e) {
@@ -99,6 +100,10 @@ public class App implements Runnable {
 
 			window.swapBuffers();
 			GLFW.glfwPollEvents();
+			
+			double time2 = System.nanoTime() - time;
+			time2*= Math.pow(10, -9);
+			System.out.println(1.0/time2);
 		}
 
 		window.close();
