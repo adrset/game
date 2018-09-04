@@ -92,6 +92,16 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
+	       <groupId>org.slf4j</groupId>
+	       <artifactId>slf4j-api</artifactId>
+	       <version>1.7.5</version>
+	   </dependency>
+	   <dependency>
+	       <groupId>org.slf4j</groupId>
+	       <artifactId>slf4j-log4j12</artifactId>
+	       <version>1.7.5</version>
+	   </dependency>
+		<dependency>
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
 			<version>${joml.version}</version>
@@ -105,6 +115,39 @@
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-glfw</artifactId>
 			<version>${lwjgl.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>org.cometd.java</groupId>
+            <artifactId>cometd-java-client</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+		
+		<dependency>
+    		<groupId>org.json</groupId>
+    		<artifactId>json</artifactId>
+   		 	<version>20180130</version>
+		</dependency>
+		<dependency>
+   			 <groupId>org.apache.httpcomponents</groupId>
+    		 <artifactId>httpclient</artifactId>
+   		     <version>4.5.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>1.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>1.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpcore</artifactId>
+		    <version>4.4.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>

@@ -24,7 +24,7 @@ public class Renderer {
 	
 	public void setProjection(int width, int height) {
 		projection = new Matrix4f();
-		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 10000.0f, false);
+		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 100000000.0f, false);
 	}
 	
 	public void render(List<Entity> toRender, Camera camera, Light light) {

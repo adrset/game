@@ -91,13 +91,14 @@ public class Window {
 
 		glfwShowWindow(windowID);
 
+		
 		// center the window
 		GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwSetWindowPos(windowID, (int) ((vidmode.width() - width) * 0.5), (int) ((vidmode.height() - height) * 0.5));
 
 		// openGL calls now available only for this thread
 		glfwMakeContextCurrent(windowID);
-		glfwSwapInterval(1);
+		GLFW.glfwSwapInterval(0);
 		// very important
 		GL.createCapabilities();
 

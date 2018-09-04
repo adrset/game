@@ -21,6 +21,7 @@ struct PointLight {
 in vec2 tex_coords;
 in vec3 normals;
 in vec3 frag_pos;
+in float instanceId;
 
 out vec4 out_Color;
 
@@ -61,8 +62,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 void main(void){
 	
 	
-	vec3 result = CalcPointLight(pointLight, normals, frag_pos, normalize(viewPos - frag_pos));    
+	/*vec3 result = CalcPointLight(pointLight, normals, frag_pos, normalize(viewPos - frag_pos));    
 	float gamma = 2.2;
     out_Color.rgb = pow(result.rgb, vec3(1.0/gamma));
-	out_Color.a = 1.0;
+	out_Color.a = 1.0;*/
+	
+	out_Color = vec4(mod(instanceId/ 1000.0f, 1.0f) , mod(instanceId/ 355.0f, 1.0), mod(instanceId/ 200.0f,2.0f), 1.0f);
 }

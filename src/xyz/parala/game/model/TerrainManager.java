@@ -1,10 +1,17 @@
 package xyz.parala.game.model;
 
 import java.awt.Image;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -14,8 +21,8 @@ import org.joml.Vector4f;
  *
  * @param  url  an absolute URL giving the base location of the image
  * @param  name the location of the image, relative to the url argument
- * @return      the image at the specified URL
- * @see         Image
+ * @return      the list of Terrains in range
+ * @see         Terrain
  */
 
 public class TerrainManager {
@@ -24,9 +31,10 @@ public class TerrainManager {
 	static final int MAX_PIXEL_COLOR = 256*256*256;
 	static final float MAX_HEIGHT = 10;
 	Mesh[] meshes = null;
+	int cacheForget = 10;
 	
 	Map<String, Terrain> cachedTerrains;
-	List<Terrain> terrainsToReturn = new ArrayList<Terrain>();
+	Set<Terrain> terrainsToReturn = new HashSet<Terrain>();
 	
 	int VERTEX_COUNT = 200;
 	public TerrainManager() throws Exception {
@@ -50,6 +58,7 @@ public class TerrainManager {
  				vertexPointer++;
  			}
  		}
+ 		
  		int pointer = 0;
  		for(int gz=0;gz<VERTEX_COUNT-1;gz++){
  			for(int gx=0;gx<VERTEX_COUNT-1;gx++){
@@ -72,8 +81,6 @@ public class TerrainManager {
  		Texture texture = textCache.getTexture("/xyz/parala/game/texture/indeks.jpg");
  		Material material = new Material(new Vector4f(), new Vector4f(), new Vector4f(), 1.0f);
  		material.setTexture(texture);
-
-
  		
  		meshes[0].setMaterial(material);
 	
@@ -84,7 +91,7 @@ public class TerrainManager {
 		String key = i + "," + j;
 		Terrain t = cachedTerrains.get(key);
 		if (t == null) {
-			t = new Terrain(meshes, new Vector3f(i*SIZE, 0, j*SIZE));
+			t = generateTerrain(new Vector3f(i*SIZE, 0, j*SIZE));
 			cachedTerrains.put(key, t);
 		}
 		return t;
@@ -92,31 +99,45 @@ public class TerrainManager {
 	
 
 	private Terrain generateTerrain(Vector3f pos) throws Exception {
-       
-        
- 		
  		return new Terrain(meshes, pos);
 	}
 	
-	public Terrain loadTerrain() {
-		return null;
+	private Terrain loadTerrain(String path) throws Exception {
+		
+		File f = new File(path);
+		FileReader fr = new FileReader(f);
+		BufferedReader reader = new BufferedReader(fr);
+		String line = null;
+		int x =0,  y = 0;
+		x = Integer.parseInt(reader.readLine());
+		y = Integer.parseInt(reader.readLine());
+		reader.close();
+		return generateTerrain(new Vector3f(x*SIZE, 0, y*SIZE));
 	}
 	
-	private void saveTerrain(Terrain t) {
-		
+	private void saveTerrain(Terrain t) throws IOException {
+		String fileName = t.getPosition().x / SIZE + "-" + t.getPosition().z / SIZE + ".trn";
+		File f = new File(fileName);
+		FileWriter fw = new FileWriter(f);
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write((int) (t.getPosition().x / SIZE) );
+		bw.write("\n" );
+		bw.write((int) (t.getPosition().z / SIZE) );
+		bw.write("\n" );
+		bw.close();
 	}
 	
 	/**
 	 * Loads and manages all available terrains.
 	 *
 	 * @param  position  posiiton of a player
-	 * @param  radius set the boundaries the amount of terrains to be returned. ( passing zero means no terrains will be returned)
+	 * @param  radius  
 	 * @return      the image at the specified URL
 	 * @throws Exception 
 	 * @see         Image
 	 */
 	
-	public List<Terrain> getTerrains(Vector3f position, int radius) throws Exception {
+	public Set<Terrain> getTerrains(Vector3f position, int radius) throws Exception {
 		if(radius == 0)
 			return null;
 		
@@ -142,18 +163,32 @@ public class TerrainManager {
 		
 		int k = i- radius;
 		int l = j- radius;
-		terrainsToReturn.clear();
+		
 		
 		for(int ii = k; ii< k + 2* radius; ii++) {
 			for(int jj = l; jj< l + 2* radius; jj++) {
 				
 				//System.out.println(ii + "," + jj);
+				
 				terrainsToReturn.add(getTerrainFromMap(ii, jj));
 			}
 		}
 		
+		Iterator<Terrain> tt = terrainsToReturn.iterator();
+		while(tt.hasNext()) {
+			Terrain t = tt.next();
+			int p=0,s=0;
+			p = (int) t.getPosition().x / SIZE;
+			s = (int) t.getPosition().z / SIZE;
+			
+			if(Math.pow(i-p,2) + Math.pow(j-s,2) > cacheForget*cacheForget ) {
+				tt.remove();
+				
+			}
+			
+		}
+		
 
-		System.out.println("Rendering " + terrainsToReturn.size() + " terrains! Cached: " + cachedTerrains.size());
 		
 		return terrainsToReturn;
 	}

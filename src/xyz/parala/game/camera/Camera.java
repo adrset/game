@@ -68,12 +68,11 @@ public class Camera implements Renderable {
 		target.normalize();
 		
 		front.set(target);
-		float speedUp;
+		float speedUp = 1;
 		if(Keyboard.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-			speedUp = 100;
-		}else {
-			speedUp = 1;
+			speedUp = 10;
 		}
+		
 		if (Keyboard.isKeyDown(GLFW.GLFW_KEY_W)) {
 			target = target.set(front).mul(cameraSpeed*speedUp);
 			position = position.add(target);
