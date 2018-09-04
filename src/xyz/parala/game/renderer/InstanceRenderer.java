@@ -7,8 +7,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 import java.nio.FloatBuffer;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -33,7 +33,7 @@ import xyz.parala.game.shader.ShaderProgram;
 
 public class InstanceRenderer {
 
-	private static final int BUFFER_INSTANCES = 100000;
+	private static final int BUFFER_INSTANCES = 1200000;
 	private static final int FLOATS_PER_INSTANCE = 16; // storing only transformation matrix
 	private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(BUFFER_INSTANCES * FLOATS_PER_INSTANCE);
 	private Mesh[] m;
@@ -80,7 +80,7 @@ public class InstanceRenderer {
 
 	}
 
-	public void renderChunks(List<Chunk> chunks, Camera camera, Light light) {
+	public void renderChunks(Set<Chunk> chunks, Camera camera, Light light) {
 
 		shader.start();
 		shader.setUniform("projection", projection);
@@ -122,46 +122,6 @@ public class InstanceRenderer {
 		GL30.glBindVertexArray(0);
 
 		shader.stop();
-	}
-
-	private void render(List<Box> boxes, Camera camera, Light light) {
-		shader.start();
-		shader.setUniform("projection", projection);
-		shader.setUniform("view", camera.getView());
-		filter.updateFrustum(projection, camera.getView());
-		light.update(shader);
-		index = 0;
-
-		float[] data = new float[boxes.size() * FLOATS_PER_INSTANCE];
-		for (Entity e : boxes) {
-
-			updateTransformationMatrix(data, e);
-
-		}
-
-		updateVBO(data);
-
-		for (int i = 0; i < m.length; i++) {
-			prepareTexture(m[i]);
-			shader.setUniform("material.shininess", 0.1f);
-
-			GL30.glBindVertexArray(m[i].getVaoId());
-			for (int j = 0; j < 9; j++)
-				glEnableVertexAttribArray(j);
-
-			GL31.glDrawElementsInstanced(GL11.GL_TRIANGLES, m[i].getVertexCount(), GL11.GL_UNSIGNED_INT, 0,
-					boxes.size());
-			glBindTexture(GL_TEXTURE_2D, 0);
-
-		}
-
-		for (int i = 0; i < 9; i++)
-			GL20.glDisableVertexAttribArray(i);
-
-		GL30.glBindVertexArray(0);
-
-		shader.stop();
-
 	}
 
 	private void prepareTexture(Mesh mesh) {

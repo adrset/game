@@ -36,7 +36,6 @@ public class ShaderProgram {
 	protected int getUniformLocation(String uniformName) {
 		int val =  GL20.glGetUniformLocation(programID, uniformName);
 		if(val == -1) {
-			// Helper check for developer :)
 			//System.err.println("SHADER::Could not bind to uniform variable in shader! (name: {" + uniformName + "})");
 		}
 		return val;

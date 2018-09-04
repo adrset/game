@@ -36,10 +36,9 @@ public class App implements Runnable {
 	float time = 0.0f;
 	boolean fullScreen = false;
 	private List<Entity> entites;
-	Set<Terrain> terrains;
 	InstanceRenderer iRenderer;
 	ChunkManager chunkManager;
-	List<Chunk> chunks;
+	Set<Chunk> chunks;
 	boolean enabled =false;
 	int iteration = 1;
 	float sum = 0;
@@ -68,8 +67,6 @@ public class App implements Runnable {
 		renderer = new Renderer( new ShaderProgram(path + "basic.vs", path + "basic.fs"), width, height);
 		iRenderer = new InstanceRenderer( new ShaderProgram(path + "instance.vs", path + "instance.fs"), width, height, MeshLoader.load("CrateModel.dae"));
 		entites = new ArrayList<Entity>();
-		chunks = new LinkedList<>();
-		float scale = Chunk.SCALE;
 		//for(int i=0;i<1000;i++) { // 10 chunks = 10*4^3 boxes
 		//	chunks.add(new Chunk(new Vector3f(i*Chunk.SIZE*scale*2.00f, 0,0)));
 		//}
@@ -102,25 +99,18 @@ public class App implements Runnable {
 				}else if(Keyboard.isKeyPressedOnce(GLFW.GLFW_KEY_I)) {
 					kl--;
 				}
-				terrains = t.getTerrains(camera.getPosition(), kl);
+				chunks = chunkManager.getChunks(camera.getPosition(), kl);
+				System.out.println(chunks.size()*64);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
 			GL11.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 			window.clear();
-			try {
-				chunks = chunkManager.getChunks(camera.getPosition(), 3);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 			doLogic();
 			light.setPosition(new Vector3f((float) (100.0f * Math.cos(this.time)), 10.0f, (float) (100.0f * Math.sin(this.time += 0.03))));
 			List<Entity> ents = new ArrayList<Entity>(entites);
-			
-			if(terrains!= null)
-				ents.addAll(terrains);
 		
 			iRenderer.renderChunks(chunks, camera, light);
 			renderer.render(ents, camera, light);
