@@ -20,12 +20,8 @@ public class ChunkManager {
 
 	// in future chunks will be stored in region class
 
-	static final int SIZE = 1000;
-	static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
-	static final float MAX_HEIGHT = 10;
 	int cacheForget = 10;
 
-	Map<String, Terrain> cachedTerrains;
 	Map<String, Chunk> cachedChunks = new TreeMap<>();;
 	List<Chunk> chunksToReturn = new ArrayList<>();
 
