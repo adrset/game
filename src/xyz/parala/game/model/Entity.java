@@ -15,8 +15,16 @@ public class Entity implements Renderable {
 	public Vector3f forward;
 	protected float scale = 1.0f;
 	
+	public void setScale(float f) {
+		scale = f;
+	}
+	
 	protected void setMeshes(Mesh[] m) {
 		this.meshes = m;
+	}
+	
+	public Mesh[] getMeshes() {
+		return this.meshes;
 	}
 
 	public Entity(Mesh[] meshes, Vector3f position, Vector3f rotation) {

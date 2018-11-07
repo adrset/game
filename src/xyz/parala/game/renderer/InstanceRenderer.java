@@ -7,7 +7,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
 import java.nio.FloatBuffer;
-import java.util.List;
 import java.util.Set;
 
 import org.joml.Matrix4f;
@@ -21,10 +20,10 @@ import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL33;
 
 import xyz.parala.game.camera.Camera;
+import xyz.parala.game.chunks.Box;
+import xyz.parala.game.chunks.Chunk;
 import xyz.parala.game.filter.FrustumCullingFilter;
 import xyz.parala.game.light.Light;
-import xyz.parala.game.model.Box;
-import xyz.parala.game.model.Chunk;
 import xyz.parala.game.model.Entity;
 import xyz.parala.game.model.Material;
 import xyz.parala.game.model.Mesh;
@@ -33,8 +32,8 @@ import xyz.parala.game.shader.ShaderProgram;
 
 public class InstanceRenderer {
 
-	private static final int BUFFER_INSTANCES = 1200000;
-	private static final int FLOATS_PER_INSTANCE = 16; // storing only transformation matrix
+	private static final int BUFFER_INSTANCES = 1000000;
+	private static final int FLOATS_PER_INSTANCE = 19; // storing only transformation matrix
 	private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(BUFFER_INSTANCES * FLOATS_PER_INSTANCE);
 	private Mesh[] m;
 	private int vbo;
@@ -52,7 +51,7 @@ public class InstanceRenderer {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
 		
 		for (int j = 0; j < m.length; j++) {
-			for (int i = 5; i < 9; i++)
+			for (int i = 5; i < 10; i++)
 				glEnableVertexAttribArray(i);
 
 			GL30.glBindVertexArray(m[j].getVaoId());
@@ -60,7 +59,7 @@ public class InstanceRenderer {
 			addInstanceAttribute(6, 4, FLOATS_PER_INSTANCE, 4);
 			addInstanceAttribute(7, 4, FLOATS_PER_INSTANCE, 8);
 			addInstanceAttribute(8, 4, FLOATS_PER_INSTANCE, 12);
-
+			addInstanceAttribute(9, 3, FLOATS_PER_INSTANCE, 16);
 			GL30.glBindVertexArray(0);
 
 		}
@@ -70,7 +69,7 @@ public class InstanceRenderer {
 		this.shader = shader;
 
 		projection = new Matrix4f();
-		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 100000000.0f, false);
+		projection.setPerspective((float) Math.toRadians(70), (float) width / height, 0.01f, 1000000.0f, false);
 	}
 
 	public void addInstanceAttribute(int attribute, int dataSize, int dataLength, int offset) {
@@ -80,7 +79,7 @@ public class InstanceRenderer {
 
 	}
 
-	public void renderChunks(Set<Chunk> chunks, Camera camera, Light light) {
+	public void renderChunks(Set<Chunk> chunks, Camera camera, Light light) throws Exception {
 
 		shader.start();
 		shader.setUniform("projection", projection);
@@ -88,27 +87,27 @@ public class InstanceRenderer {
 		filter.updateFrustum(projection, camera.getView());
 		light.update(shader);
 		index = 0;
-		final int size = chunks.size() * Chunk.SIZE * Chunk.SIZE * Chunk.SIZE;
+		final int size = chunks.size() * Chunk.SIZE * Chunk.HEIGHT * Chunk.SIZE;
+		if(size > BUFFER_INSTANCES)
+			throw new Exception("InstanceRenderer: Error, to many instances!!! "+size + " provided, while "+ BUFFER_INSTANCES + " is maximum!");
 		float[] data = new float[FLOATS_PER_INSTANCE * size];
-		for (Chunk chunk : chunks) {
-
-			for (Entity e : chunk.getBoxes()) {
-
-				updateTransformationMatrixWithRelativePosition(data, e, chunk.getPosition());
-
+		if(update) {
+			for (Chunk chunk : chunks) {
+				for (Box e : chunk.getBoxes()) {
+					updateTransformationMatrixWithRelativePosition(data, e, chunk.getPosition());
+				}
 			}
-
+	
+			updateVBO(data);
+			
 		}
-
-		updateVBO(data);
-
 		for (int i = 0; i < m.length; i++) {
 			prepareTexture(m[i]);
 			shader.setUniform("material.shininess", 0.1f);
 
 			GL30.glBindVertexArray(m[i].getVaoId());
 
-			for (int j = 0; j < 9; j++)
+			for (int j = 0; j < 10; j++)
 				glEnableVertexAttribArray(j);
 
 			GL31.glDrawElementsInstanced(GL11.GL_TRIANGLES, m[i].getVertexCount(), GL11.GL_UNSIGNED_INT, 0, size);
@@ -116,7 +115,49 @@ public class InstanceRenderer {
 
 		}
 
-		for (int i = 0; i < 9; i++)
+		for (int i = 0; i < 10; i++)
+			GL20.glDisableVertexAttribArray(i);
+
+		GL30.glBindVertexArray(0);
+
+		shader.stop();
+	}
+	
+	public void renderSpheres(Set<Entity> spheres, Camera camera, Light light) throws Exception {
+
+		shader.start();
+		shader.setUniform("projection", projection);
+		shader.setUniform("view", camera.getView());
+		shader.setUniform("blinn", 2.0f);
+		filter.updateFrustum(projection, camera.getView());
+		light.update(shader);
+		index = 0;
+		float[] data = new float[FLOATS_PER_INSTANCE * spheres.size()];
+		if(update) {
+			for (Entity e : spheres) {
+				
+				updateTransformationMatrix(data, e);
+				
+			}
+	
+			updateVBO(data);
+			
+		}
+		for (int i = 0; i < m.length; i++) {
+			prepareTexture(m[i]);
+			shader.setUniform("material.shininess", 0.4f);
+
+			GL30.glBindVertexArray(m[i].getVaoId());
+
+			for (int j = 0; j < 10; j++)
+				glEnableVertexAttribArray(j);
+
+			GL31.glDrawElementsInstanced(GL11.GL_TRIANGLES, m[i].getVertexCount(), GL11.GL_UNSIGNED_INT, 0, spheres.size());
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+		}
+
+		for (int i = 0; i < 10; i++)
 			GL20.glDisableVertexAttribArray(i);
 
 		GL30.glBindVertexArray(0);
@@ -143,20 +184,23 @@ public class InstanceRenderer {
 			shader.setUniform("material.specular", 1);
 		}
 	}
-
-	private void updateTransformationMatrixWithRelativePosition(float[] data, Entity entity, Vector3f rel) {
-		Matrix4f transformationMatrix = entity.createModelMatrix(rel);
-		storeMatrixData(transformationMatrix, data);
-	}
-
+	
 	private void updateTransformationMatrix(float[] data, Entity entity) {
 		Matrix4f transformationMatrix = entity.createModelMatrix();
-		storeMatrixData(transformationMatrix, data);
+		storeMatrixData(transformationMatrix, data, new Vector3f(0.5f, 0.1f, 0.7f));
 	}
 
-	private void storeMatrixData(Matrix4f matrix, float[] data) {
+	private void updateTransformationMatrixWithRelativePosition(float[] data, Box entity, Vector3f rel) {
+		Matrix4f transformationMatrix = entity.createModelMatrix(rel);
+		storeMatrixData(transformationMatrix, data, entity.getColor());
+	}
+
+	private void storeMatrixData(Matrix4f matrix, float[] data, Vector3f color) {
 		data = matrix.get(data, index);
 		index += 16;
+		data [index++] = color.x;
+		data [index++] = color.y;
+		data [index++] = color.z;
 	}
 
 	public void updateVBO(float[] data) {

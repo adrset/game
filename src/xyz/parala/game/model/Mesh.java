@@ -2,6 +2,7 @@ package xyz.parala.game.model;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
@@ -44,6 +45,8 @@ public class Mesh implements Renderable {
 	private final int vertexCount;
 
 	private Material material;
+	
+	private boolean lines = false;
 
 	private Vector3f max;
 
@@ -58,7 +61,6 @@ public class Mesh implements Renderable {
 
 	public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, int[] jointIndices,
 			float[] weights) {
-
 		FloatBuffer posBuffer = null;
 		FloatBuffer textCoordsBuffer = null;
 		FloatBuffer vecNormalsBuffer = null;
@@ -273,7 +275,12 @@ public class Mesh implements Renderable {
 		for (int i = 0; i < 5; i++)
 			glEnableVertexAttribArray(i);
 
-		glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+		if(!lines)
+			glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+		else
+			glDrawElements(GL_LINES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+			
 
 		for (int i = 0; i < 5; i++)
 			glDisableVertexAttribArray(i);
@@ -282,6 +289,10 @@ public class Mesh implements Renderable {
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+	}
+	
+	public void setLines(boolean state) {
+		lines = state;
 	}
 
 	@Override

@@ -1,9 +1,7 @@
-package xyz.parala.game.model;
+package xyz.parala.game.chunks;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -11,21 +9,17 @@ import java.util.TreeMap;
 import org.joml.Vector3f;
 
 /**
- * Loads and manages all available terrains.
- *
- * @param url  an absolute URL giving the base location of the image
- * @param name the location of the image, relative to the url argument
- * @return the list of Terrains in range
- * @see Terrain
+ * Loads and manages all available chunks.
+ * @see Chunk
  */
 
 public class ChunkManager {
 	
-	static final int MAX_HEIGHT = 10;
+	static final int MAX_HEIGHT = 8;
 
 	// in future chunks will be stored in region class
 
-	int cacheForget = 10;
+	int cacheForget = 14;
 
 	Map<String, Chunk> cachedChunks = new TreeMap<>();;
 	Set<Chunk> chunksToReturn = new HashSet<>();
@@ -34,7 +28,7 @@ public class ChunkManager {
 
 	}
 
-	private Chunk loadChunk(int x, int y, int z, float offset) throws Exception {
+	private Chunk loadChunk(int x, int y, int z, float offset) {
 		if(y> MAX_HEIGHT) return null;
 		String key = x+","+y+","+z;
 		Chunk ch = cachedChunks.get(key);
@@ -59,7 +53,8 @@ public class ChunkManager {
 	 * @throws Exception
 	 */
 
-	public Set<Chunk> getChunks(Vector3f position, int radius) throws Exception {
+	public Set<Chunk> getChunks(Vector3f position, int radius) {
+		//if(radius>4) radius = 4;
 		//chunksToReturn.clear();
 		final float chunkOffset = Chunk.SIZE * 2.0f;
 
@@ -109,12 +104,10 @@ public class ChunkManager {
 			
 			if(Math.pow(i-x,2) + Math.pow(k-z,2) > cacheForget*cacheForget ) {
 				tt.remove();
-				
 			}
 			
 		}
 		
-
 		return chunksToReturn;
 	}
 

@@ -1,13 +1,15 @@
-#version 330
+#version 130
 
-layout ( location = 0 )in vec3 position; //0
-layout ( location = 1 )in vec2 texture_coord;
-layout ( location = 2 )in vec3 normal;
+in vec3 position; //0
+in vec2 texture_coord;
+in vec3 normal;
 // 3,4 not used but reserved
-layout ( location = 5 )in mat4 model;
+in mat4 model;
+in vec3 color;
 uniform mat4 projection;
 uniform mat4 view;
 
+out vec3 box_color;
 out vec2 tex_coords;
 out vec3 normals;
 out vec3 frag_pos;
@@ -19,4 +21,5 @@ void main(void){
 	tex_coords = texture_coord;
 	normals = normal;
 	instanceId = gl_InstanceID;
+	box_color = color;
 }

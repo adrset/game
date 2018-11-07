@@ -1,4 +1,4 @@
-#version 150
+#version 130
 
 struct Material {
     sampler2D diffuse;
@@ -22,6 +22,7 @@ in vec2 tex_coords;
 in vec3 normals;
 in vec3 frag_pos;
 in float instanceId;
+in vec3 box_color;
 
 out vec4 out_Color;
 
@@ -58,14 +59,35 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     return (ambient + diffuse + specular);
 }
 
+vec3 CalcPointLight2(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 colour)
+{
+    vec3 lightDir = normalize(light.position - fragPos);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+ 
+   	vec3 reflectDir = reflect(-lightDir, normal);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);	
+	
+    // attenuation
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    // combine results
+    vec3 ambient = light.ambient * colour;
+    vec3 diffuse = light.diffuse * diff * colour;
+    vec3 specular = light.specular * spec * colour; // specular here
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+    return (ambient + diffuse + specular);
+}
+
 
 void main(void){
 	
 	
-	/*vec3 result = CalcPointLight(pointLight, normals, frag_pos, normalize(viewPos - frag_pos));    
+	vec3 result = CalcPointLight2(pointLight, normals, frag_pos, normalize(viewPos - frag_pos), box_color);    
 	float gamma = 2.2;
     out_Color.rgb = pow(result.rgb, vec3(1.0/gamma));
-	out_Color.a = 1.0;*/
-	
-	out_Color = vec4(mod(instanceId/ 1000.0f, 1.0f) , mod(instanceId/ 355.0f, 1.0), mod(instanceId/ 200.0f,2.0f), 1.0f);
+	out_Color.a = 1.0;
 }

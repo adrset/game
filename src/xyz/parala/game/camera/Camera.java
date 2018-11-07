@@ -44,7 +44,6 @@ public class Camera implements Renderable {
 
 	@Override
 	public void draw(ShaderProgram shader) {
-		// TODO Auto-generated method stub
 		
 	}
 
