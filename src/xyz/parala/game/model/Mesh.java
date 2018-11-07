@@ -268,7 +268,7 @@ public class Mesh implements Renderable {
 			shader.setUniform("material.specular", 1);
 		}
 		shader.setUniform("material.shininess", 0.1f);
-
+		shader.setUniform("sp_color", new Vector3f(0.5f,0.1f,0.3f));
 		// Draw the mesh
 		glBindVertexArray(getVaoId());
 

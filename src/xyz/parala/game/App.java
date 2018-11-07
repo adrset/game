@@ -18,9 +18,9 @@ import xyz.parala.game.camera.Camera;
 import xyz.parala.game.input.Keyboard;
 import xyz.parala.game.light.Light;
 import xyz.parala.game.model.Entity;
+import xyz.parala.game.model.MeshCache;
 import xyz.parala.game.model.MeshLoader;
 import xyz.parala.game.model.Renderable;
-import xyz.parala.game.renderer.InstanceRenderer;
 import xyz.parala.game.renderer.Renderer;
 import xyz.parala.game.shader.ShaderProgram;
 import xyz.parala.game.util.Timer;
@@ -40,11 +40,10 @@ public class App implements Runnable {
 	boolean fullScreen = false;
 	private List<Entity> entites;
 	private List<Vector3f> positions;
-	private Set<Entity> spheres;
+	private List<Entity> spheres;
 	final int N = 125;
 	final int FPS_OUT = 50;
 	int loop = 0;
-	InstanceRenderer iRenderer;
 	Timer timer;
 
 	public App(String title, int width, int height, boolean fullScreen, String file) {
@@ -53,7 +52,7 @@ public class App implements Runnable {
 		this.file = file;
 		this.height = height;
 		this.width = width;
-		spheres = new HashSet<>();
+		spheres = new ArrayList<>();
 		positions = new ArrayList<>();
 		thread = new Thread(this, "Game");
 		thread.start();
@@ -80,14 +79,9 @@ public class App implements Runnable {
 			String path = "/xyz/parala/game/shader/";
 			renderer = new Renderer(new ShaderProgram(path + "basic.vs", path + "basic.fs"), width, height);
 
-			iRenderer = new InstanceRenderer(new ShaderProgram(path + "instance.vs", path + "instance.fs"), width,
-					height, MeshLoader.load("untitled.dae"));
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		String fileName = "/xyz/parala/game/data/xyz.dat";
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -101,11 +95,11 @@ public class App implements Runnable {
 			}
 
 			for (int ii = 0; ii < N; ii++) {
-				spheres.add(new Entity(null, new Vector3f(ii, 0, 0), new Vector3f(), 0.19f));
+				spheres.add(new Entity(MeshCache.getInstance().getMesh("untitled.dae"), new Vector3f(ii, 0, 0), new Vector3f(), 0.19f));
 			}
 			iteration++;
 
-		} catch (IOException e) {
+		} catch ( Exception e) {
 			e.printStackTrace();
 		}
 
@@ -135,9 +129,11 @@ public class App implements Runnable {
 
 			doLogic();
 
-			iRenderer.renderSpheres(spheres, camera, light);
+			//iRenderer.renderSpheres(spheres, camera, light);
 			light.setPosition(camera.getPosition());
-			renderer.render(entites, camera, light);
+			List<Entity> all = new ArrayList<>(spheres);
+			all.addAll(entites);
+			renderer.render(all, camera, light);
 			window.swapBuffers();
 			GLFW.glfwPollEvents();
 			if (loop++ % FPS_OUT == 0) {
