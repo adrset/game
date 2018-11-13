@@ -5,13 +5,15 @@ import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.AI_MATKEY_COLOR_SPECULAR;
 import static org.lwjgl.assimp.Assimp.aiGetErrorString;
 import static org.lwjgl.assimp.Assimp.aiGetMaterialColor;
-import static org.lwjgl.assimp.Assimp.aiImportFileFromMemory;
+import static org.lwjgl.assimp.Assimp.aiImportFile;
 import static org.lwjgl.assimp.Assimp.aiProcess_FixInfacingNormals;
 import static org.lwjgl.assimp.Assimp.aiProcess_JoinIdenticalVertices;
 import static org.lwjgl.assimp.Assimp.aiProcess_Triangulate;
 import static org.lwjgl.assimp.Assimp.aiTextureType_DIFFUSE;
 import static org.lwjgl.assimp.Assimp.aiTextureType_NONE;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -42,19 +44,13 @@ public class MeshLoader {
 	}
 
 	public static Mesh[] load(String resourcePath, int flags) throws Exception {
-		String fileName = "/xyz/parala/game/model/" + resourcePath;
+		
 		if (resourcePath.contains(".obj")) {
 			throw new Exception("OBJ files unsupported!!! Prefered extension is .dae");
 		}
 
-		InputStream in = Class.class.getResourceAsStream(fileName);
-	
-		byte[] _data = IOUtils.toByteArray(in);
-		ByteBuffer data = MemoryUtil.memCalloc(_data.length);
-		data.put(_data);
-		data.flip();
-		AIScene aiScene = aiImportFileFromMemory(data, flags, "");
-		MemoryUtil.memFree(data);
+
+		AIScene aiScene = aiImportFile(resourcePath, flags);
 
 		if (aiScene == null) {
 			throw new IllegalStateException(aiGetErrorString());

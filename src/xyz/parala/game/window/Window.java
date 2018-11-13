@@ -81,8 +81,9 @@ public class Window {
 		System.out.println("glfw_version " + Version.getVersion() + "!");
 
 		// Set window to not resizable
-		glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // TODO: after resizing the window, apply changes to renderer in
-														// order to render into entire window
+		GLFW.glfwWindowHint(GLFW_RESIZABLE, GL11.GL_FALSE); // TODO: after resizing the window, apply changes to renderer in
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 2);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 1);												// order to render into entire window
 
 		// Create window
 		

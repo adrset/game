@@ -1,15 +1,15 @@
-#version 130
+#version 120
 
-in vec3 position;
-in vec2 texture_coord;
-in vec3 normal;
+attribute vec3 position;
+attribute vec2 texture_coord;
+attribute vec3 normal;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 
-out vec2 tex_coords;
-out vec3 normals;
-out vec3 frag_pos;
+varying vec2 tex_coords;
+varying vec3 normals;
+varying vec3 frag_pos;
 
 void main(void){
 	frag_pos =  vec3(model * vec4(position, 1.0));
